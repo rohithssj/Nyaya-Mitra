@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 
 export function useCameraCapture({ onCapture }: { onCapture?: (file: File, url: string) => void }) {
   const fileInputRef = useRef<HTMLInputElement>(null)

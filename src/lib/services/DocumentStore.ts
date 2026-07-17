@@ -87,10 +87,11 @@ export class DocumentStore {
 
   static removeDocument(id: string): void {
     const doc = this.documents.get(id)
-    if (doc?.previewUrl) {
+    if (!doc) return
+    if (doc.previewUrl) {
       URL.revokeObjectURL(doc.previewUrl)
     }
-    this.documents.set(id, { ...doc, file: null as any }) // Help GC
+    doc.file = null as unknown as File // Help GC
     this.documents.delete(id)
   }
 }

@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 import type { UploadState } from '@/hooks/useFileUpload'
-import { Button } from './Button'
 
 export interface UploadZoneProps extends React.HTMLAttributes<HTMLDivElement> {
   onUploadClick?: () => void;

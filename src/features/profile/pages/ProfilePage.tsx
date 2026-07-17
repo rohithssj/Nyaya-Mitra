@@ -12,9 +12,8 @@ export function ProfilePage() {
   const [recentActivity] = React.useState(mockHistory.slice(0, 2))
 
   const { fileInputRef, triggerUpload, onFileChange, accept } = useFileUpload({
-    accept: 'image/jpeg, image/png, image/webp',
-    onUploadSuccess: (file, url) => {
-      if (url) setUser({ ...user, avatar: url })
+    onSuccess: (doc) => {
+      if (doc.previewUrl) setUser({ ...user, avatar: doc.previewUrl })
     }
   })
 

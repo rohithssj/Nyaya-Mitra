@@ -1,4 +1,4 @@
-import { DocumentStore, type Document } from './DocumentStore'
+import { DocumentStore } from './DocumentStore'
 
 export interface OCRResult {
   documentId: string

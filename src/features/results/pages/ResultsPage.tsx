@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { Card } from '@/components/common/Card'
 import { DocumentStore } from '@/lib/services/DocumentStore'

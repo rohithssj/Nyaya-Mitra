@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { UploadZone } from '@/components/common/UploadZone'
@@ -48,7 +47,7 @@ export function UploadPage() {
     closeCamera,
     mobileInputRef,
     handleMobileCapture
-  } = useCamera(handleProcessFile, (err) => console.error(err))
+  } = useCamera(handleProcessFile)
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center p-6 pb-10 text-center">

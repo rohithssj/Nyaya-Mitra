@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react'
-import { CameraService } from '@/lib/services/CameraService'
 
-export function useCamera(onCaptureSuccess: (file: File) => void, onError: (error: string) => void) {
+export function useCamera(onCaptureSuccess: (file: File) => void) {
   const [isCameraOpen, setIsCameraOpen] = useState(false)
   const mobileInputRef = useRef<HTMLInputElement>(null)
 
