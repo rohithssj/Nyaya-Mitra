@@ -6,6 +6,8 @@ import { OCRService } from './src/services/OCRService.js';
 import { ClassificationService } from './src/services/ClassificationService.js';
 import { ExtractionService } from './src/services/ExtractionService.js';
 import { RuleEngineService } from './src/services/RuleEngineService.js';
+import { SummaryService } from './src/services/SummaryService.js';
+import { TimelineService } from './src/services/TimelineService.js';
 import { DocumentStore } from './src/storage/DocumentStore.js';
 import fs from 'fs/promises';
 import crypto from 'crypto';
@@ -65,6 +67,18 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
           ruleEngine = await RuleEngineService.analyzeSections(sections, documentType);
           cachedDoc.ruleEngine = ruleEngine;
       }
+      
+      let summary = cachedDoc.summary;
+      if (!summary) {
+          summary = await SummaryService.generateSummary(cachedDoc.ocr.rawText, cachedDoc.id) || undefined;
+          if (summary) cachedDoc.summary = summary;
+      }
+      
+      let timeline = cachedDoc.timeline;
+      if (!timeline) {
+          timeline = TimelineService.generateTimeline(classification, extraction, ruleEngine);
+          cachedDoc.timeline = timeline;
+      }
 
       DocumentStore.saveDocument(fileHash, cachedDoc);
 
@@ -82,7 +96,9 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
         },
         classification,
         ...(extraction ? { extraction } : { extraction: null }),
-        ruleEngine
+        ruleEngine,
+        summary: summary || null,
+        timeline
       });
     }
 
@@ -108,6 +124,14 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
     const docType = extraction?.documentType || classification.type;
     const ruleEngine = await RuleEngineService.analyzeSections(sections, docType);
     console.log('\n--- DEBUG (api/ocr): RULE ENGINE COMPLETED ---\n');
+    
+    // Process Summary & Timeline Concurrently
+    console.log('\n--- DEBUG (api/ocr): ABOUT TO CALL Summary and Timeline ---\n');
+    const [summary, timeline] = await Promise.all([
+        SummaryService.generateSummary(ocrResult.rawText, documentId),
+        Promise.resolve(TimelineService.generateTimeline(classification, extraction, ruleEngine))
+    ]);
+    console.log('\n--- DEBUG (api/ocr): SUMMARY AND TIMELINE COMPLETED ---\n');
 
     const document: Document = {
       id: documentId,
@@ -118,7 +142,9 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
       ocr: ocrResult,
       classification,
       ...(extraction ? { extraction } : {}),
-      ruleEngine
+      ruleEngine,
+      ...(summary ? { summary } : {}),
+      timeline
     };
 
     // Store in cache
@@ -138,7 +164,9 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
       },
       classification,
       extraction: extraction || null,
-      ruleEngine
+      ruleEngine,
+      summary: summary || null,
+      timeline
     });
 
   } catch (error: any) {

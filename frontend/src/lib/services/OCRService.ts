@@ -42,7 +42,9 @@ export class OCRService {
         ocr: ocrResult,
         classification: result.classification,
         extraction: result.extraction,
-        ruleEngine: result.ruleEngine
+        ruleEngine: result.ruleEngine,
+        summary: result.summary,
+        timeline: result.timeline
       })
 
       console.log('[DEBUG Frontend] 5.1 Storage complete.')

@@ -38,6 +38,8 @@ export function ResultsPage() {
   
   const ext = doc.extraction;
   const re = doc.ruleEngine;
+  const summary = doc.summary;
+  const timeline = doc.timeline;
 
   return (
     <div className="w-full pb-[60px] pt-[40px]">
@@ -88,21 +90,54 @@ export function ResultsPage() {
           </div>
         </div>
 
-        {/* 2. Plain OCR Text */}
+        {/* 2. Plain Language Summary */}
         <Card className="mb-7 p-[26px]">
           <div className="mb-3.5 flex items-center gap-2.5 font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--color-gold-bright)] before:h-px before:w-[14px] before:bg-[var(--color-gold-bright)]">
-            Extracted Text
+            📝 Plain Language Summary
           </div>
-          <div className="whitespace-pre-wrap font-sans text-[15px] leading-[1.75] text-[#C9C0B4] max-h-[400px] overflow-y-auto">
-            {ocr.rawText === 'Not Available' ? (
-              <span className="italic text-[var(--color-text-secondary)]">No text could be extracted from this document.</span>
+          <div className="font-sans text-[15.5px] leading-[1.8] text-[#F5F5F5] max-w-[850px]">
+            {summary ? (
+              <p>{summary}</p>
             ) : (
-              ocr.rawText
+              <p className="italic text-[var(--color-text-secondary)]">Summary could not be generated.</p>
             )}
           </div>
         </Card>
 
-        {/* 3. Extracted Information */}
+        {/* 3. Legal Timeline */}
+        <Card className="mb-7 p-[26px]">
+          <div className="mb-6 flex items-center gap-2.5 font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--color-gold-bright)] before:h-px before:w-[14px] before:bg-[var(--color-gold-bright)]">
+            📅 Legal Timeline
+          </div>
+          
+          {timeline && timeline.events.length > 0 ? (
+            <div className="relative ml-3 border-l border-[var(--color-border)] pl-6 space-y-8">
+              {timeline.events.map((event, index) => (
+                <div key={index} className="relative">
+                  <div className="absolute -left-[31px] top-1 h-3 w-3 rounded-full border-[2px] border-[var(--color-surface)] bg-[var(--color-gold-bright)]"></div>
+                  
+                  {event.date && (
+                    <div className="mb-1 font-mono text-[11.5px] uppercase tracking-wider text-[var(--color-gold-bright)]">
+                      {event.date}
+                    </div>
+                  )}
+                  <h3 className="mb-1.5 font-sans text-[16px] font-semibold text-[#F5F5F5]">
+                    {event.title}
+                  </h3>
+                  <p className="font-sans text-[14.5px] leading-relaxed text-[#C9C0B4]">
+                    {event.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="italic text-[var(--color-text-secondary)]">
+              No timeline available for this document.
+            </div>
+          )}
+        </Card>
+
+        {/* 4. Extracted Information */}
         {ext && (
           <Card className="mb-7 p-[26px]">
             <div className="mb-5 flex items-center gap-2.5 font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--color-gold-bright)] before:h-px before:w-[14px] before:bg-[var(--color-gold-bright)]">
@@ -181,24 +216,26 @@ export function ResultsPage() {
           </Card>
         )}
 
-        {/* 4. Legal Analysis (Rule Engine) */}
+        {/* 5. Legal Analysis (Rule Engine) */}
         <Card className="mb-7 p-[26px]">
           <div className="mb-5 flex items-center gap-2.5 font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--color-gold-bright)] before:h-px before:w-[14px] before:bg-[var(--color-gold-bright)]">
             Legal Analysis (Rule Engine)
           </div>
           
-          {re && re.sections.length > 0 ? (
+          {re && (re.sections.length > 0 || re.facts.length > 0) ? (
             <div className="space-y-6">
-              <div>
-                <h3 className="mb-2 font-mono text-[13px] uppercase tracking-wider text-[var(--color-text-secondary)]">Rules Applied</h3>
-                <div className="flex flex-wrap gap-2">
-                  {re.sections.map(sec => (
-                    <span key={sec} className="rounded-full border border-[var(--color-border)] bg-black/20 px-3 py-1 font-mono text-[13px] text-[#F5F5F5]">
-                      {sec}
-                    </span>
-                  ))}
+              {re.sections.length > 0 && (
+                <div>
+                  <h3 className="mb-2 font-mono text-[13px] uppercase tracking-wider text-[var(--color-text-secondary)]">Rules Applied</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {re.sections.map(sec => (
+                      <span key={sec} className="rounded-full border border-[var(--color-border)] bg-black/20 px-3 py-1 font-mono text-[13px] text-[#F5F5F5]">
+                        {sec}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {re.facts.length > 0 && (
                 <div>
@@ -274,7 +311,21 @@ export function ResultsPage() {
           )}
         </Card>
 
-        {/* 5. Developer Debug Panel */}
+        {/* 6. Plain OCR Text */}
+        <Card className="mb-7 p-[26px]">
+          <div className="mb-3.5 flex items-center gap-2.5 font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--color-gold-bright)] before:h-px before:w-[14px] before:bg-[var(--color-gold-bright)]">
+            Extracted Text
+          </div>
+          <div className="whitespace-pre-wrap font-sans text-[15px] leading-[1.75] text-[#C9C0B4] max-h-[400px] overflow-y-auto">
+            {ocr.rawText === 'Not Available' ? (
+              <span className="italic text-[var(--color-text-secondary)]">No text could be extracted from this document.</span>
+            ) : (
+              ocr.rawText
+            )}
+          </div>
+        </Card>
+
+        {/* 7. Developer Debug Panel */}
         <div className="mt-12 rounded-[4px] border border-[var(--color-border)] bg-[var(--color-surface)]">
           <button 
             className="flex w-full items-center justify-between p-4 font-mono text-[12px] uppercase tracking-wider text-[var(--color-gold-bright)] hover:bg-black/20"

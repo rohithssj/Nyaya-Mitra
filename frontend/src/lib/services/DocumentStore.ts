@@ -53,6 +53,16 @@ export interface RuleEngineResult {
   facts: string[]
 }
 
+export interface TimelineEvent {
+  title: string
+  date?: string
+  description: string
+}
+
+export interface TimelineResult {
+  events: TimelineEvent[]
+}
+
 export interface Document {
   id: string
   file: File
@@ -66,6 +76,8 @@ export interface Document {
   classification?: ClassificationResult
   extraction?: ExtractionResult
   ruleEngine?: RuleEngineResult
+  summary?: string
+  timeline?: TimelineResult
 }
 
 export class DocumentStore {

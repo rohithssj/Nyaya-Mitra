@@ -24,4 +24,6 @@ export interface Document {
     classification?: ClassificationResult;
     extraction?: ExtractionResult;
     ruleEngine?: import('./rules.js').RuleEngineResult;
+    summary?: string;
+    timeline?: any;
 }
