@@ -38,17 +38,25 @@ export class AIService {
         inlineData?: { mimeType: string; data: string },
         config?: GenerateConfig
     ): Promise<AIResponse> {
+        console.log('\n--- DEBUG (AIService): generate() QUEUED --- models:', models, '\n');
         return new Promise((resolve, reject) => {
             const task = async () => {
+                console.log('\n--- DEBUG (AIService): task() STARTED executing ---\n');
                 let lastError: Error | null = null;
 
                 for (const model of models) {
-                    if (!model) continue;
+                    if (!model) {
+                        console.log('\n--- DEBUG (AIService): Skipping undefined model ---\n');
+                        continue;
+                    }
                     
                     try {
+                        console.log(`\n--- DEBUG (AIService): Calling OpenRouter for model: ${model} ---\n`);
                         const response = await this.provider.generate(model, prompt, inlineData, config);
+                        console.log(`\n--- DEBUG (AIService): OpenRouter call SUCCESS ---\n`);
                         return resolve(response);
                     } catch (error: any) {
+                        console.error(`\n--- DEBUG (AIService): OpenRouter call FAILED for model ${model} ---\n`, error);
                         lastError = error;
                         // If it's a permanent error like 404 (model unavailable), try the next model in fallback array
                         if (error.status === 404 || error.status === 400) {
@@ -60,6 +68,7 @@ export class AIService {
                     }
                 }
 
+                console.error('\n--- DEBUG (AIService): All models failed or no valid models found ---\n');
                 if (lastError) {
                     const status = (lastError as any).status;
                     if (status === 429) {

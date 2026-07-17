@@ -1,7 +1,17 @@
+import type { ExtractionResult } from './extraction.js';
+
 export interface OCRResult {
     rawText: string;
     language: string;
     processingTime: number;
+}
+
+export interface ClassificationResult {
+    type: string;
+    confidence: number;
+    model: string;
+    processingTime: number;
+    processedAt: string;
 }
 
 export interface Document {
@@ -11,4 +21,6 @@ export interface Document {
     mimeType: string;
     size: number;
     ocr: OCRResult;
+    classification?: ClassificationResult;
+    extraction?: ExtractionResult;
 }
