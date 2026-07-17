@@ -14,11 +14,12 @@ export function ProcessingPage() {
   const [error, setError] = React.useState<string | null>(null)
 
   const steps = [
-    "Uploading",
-    "Extracting Text",
-    "Reading Document",
-    "Detecting Language",
-    "Almost Done"
+    "Uploading...",
+    "Extracting Text...",
+    "Reading Pages...",
+    "Detecting Language...",
+    "Saving OCR...",
+    "Done"
   ]
 
   React.useEffect(() => {
@@ -106,7 +107,7 @@ export function ProcessingPage() {
                 transition={{ duration: 0.3 }}
                 className="absolute inset-0 flex items-center justify-center text-[14.5px] tracking-wide text-[#C9C0B4]"
               >
-                {step}...
+                {step}
               </motion.div>
             ))}
           </div>
