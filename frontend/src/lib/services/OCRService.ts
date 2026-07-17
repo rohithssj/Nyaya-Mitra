@@ -44,6 +44,7 @@ export class OCRService {
         extraction: result.extraction,
         ruleEngine: result.ruleEngine,
         summary: result.summary,
+        rights: result.rights,
         timeline: result.timeline
       })
 

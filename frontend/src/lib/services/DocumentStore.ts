@@ -63,6 +63,13 @@ export interface TimelineResult {
   events: TimelineEvent[]
 }
 
+export interface RightsResult {
+  rightsSummary: string
+  nextSteps: string[]
+  documentsToKeep: string[]
+  warnings: string[]
+}
+
 export interface Document {
   id: string
   file: File
@@ -77,6 +84,7 @@ export interface Document {
   extraction?: ExtractionResult
   ruleEngine?: RuleEngineResult
   summary?: string
+  rights?: RightsResult
   timeline?: TimelineResult
 }
 

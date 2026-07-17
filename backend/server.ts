@@ -8,6 +8,7 @@ import { ExtractionService } from './src/services/ExtractionService.js';
 import { RuleEngineService } from './src/services/RuleEngineService.js';
 import { SummaryService } from './src/services/SummaryService.js';
 import { TimelineService } from './src/services/TimelineService.js';
+import { RightsService } from './src/services/RightsService.js';
 import { DocumentStore } from './src/storage/DocumentStore.js';
 import fs from 'fs/promises';
 import crypto from 'crypto';
@@ -80,6 +81,12 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
           cachedDoc.timeline = timeline;
       }
 
+      let rights = cachedDoc.rights;
+      if (!rights) {
+          rights = await RightsService.generateRights(cachedDoc.ocr.rawText, cachedDoc.id, classification, extraction, ruleEngine, timeline) || undefined;
+          if (rights) cachedDoc.rights = rights;
+      }
+
       DocumentStore.saveDocument(fileHash, cachedDoc);
 
       // Clean up uploaded file since we used cache
@@ -98,6 +105,7 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
         ...(extraction ? { extraction } : { extraction: null }),
         ruleEngine,
         summary: summary || null,
+        rights: rights || null,
         timeline
       });
     }
@@ -125,13 +133,14 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
     const ruleEngine = await RuleEngineService.analyzeSections(sections, docType);
     console.log('\n--- DEBUG (api/ocr): RULE ENGINE COMPLETED ---\n');
     
-    // Process Summary & Timeline Concurrently
-    console.log('\n--- DEBUG (api/ocr): ABOUT TO CALL Summary and Timeline ---\n');
-    const [summary, timeline] = await Promise.all([
+    // Process Summary & Rights Concurrently
+    console.log('\n--- DEBUG (api/ocr): ABOUT TO CALL Summary and Rights ---\n');
+    const timeline = TimelineService.generateTimeline(classification, extraction, ruleEngine);
+    const [summary, rights] = await Promise.all([
         SummaryService.generateSummary(ocrResult.rawText, documentId),
-        Promise.resolve(TimelineService.generateTimeline(classification, extraction, ruleEngine))
+        RightsService.generateRights(ocrResult.rawText, documentId, classification, extraction, ruleEngine, timeline)
     ]);
-    console.log('\n--- DEBUG (api/ocr): SUMMARY AND TIMELINE COMPLETED ---\n');
+    console.log('\n--- DEBUG (api/ocr): SUMMARY AND RIGHTS COMPLETED ---\n');
 
     const document: Document = {
       id: documentId,
@@ -144,6 +153,7 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
       ...(extraction ? { extraction } : {}),
       ruleEngine,
       ...(summary ? { summary } : {}),
+      ...(rights ? { rights } : {}),
       timeline
     };
 
@@ -166,6 +176,7 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
       extraction: extraction || null,
       ruleEngine,
       summary: summary || null,
+      rights: rights || null,
       timeline
     });
 

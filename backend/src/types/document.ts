@@ -6,6 +6,13 @@ export interface OCRResult {
     processingTime: number;
 }
 
+export interface RightsResult {
+    rightsSummary: string;
+    nextSteps: string[];
+    documentsToKeep: string[];
+    warnings: string[];
+}
+
 export interface ClassificationResult {
     type: string;
     confidence: number;
@@ -25,5 +32,6 @@ export interface Document {
     extraction?: ExtractionResult;
     ruleEngine?: import('./rules.js').RuleEngineResult;
     summary?: string;
+    rights?: RightsResult;
     timeline?: any;
 }
