@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/common/Button'
 
 export function Navbar() {
@@ -44,9 +45,9 @@ export function Navbar() {
       {/* Right: Language, Upload CTA, Profile */}
       <div className="flex items-center gap-5">
         <div className="hidden overflow-hidden rounded-full border border-[var(--color-border)] font-mono text-[12.5px] sm:flex">
-          <button className="bg-[var(--color-primary)] px-[13px] py-[7px] text-[var(--color-ivory)] transition-all">EN</button>
-          <button className="px-[13px] py-[7px] text-[var(--color-text-secondary)] transition-all hover:text-[var(--color-ivory)]">हिं</button>
-          <button className="px-[13px] py-[7px] text-[var(--color-text-secondary)] transition-all hover:text-[var(--color-ivory)]">తె</button>
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-[var(--color-primary)] px-[13px] py-[7px] text-[var(--color-ivory)] transition-all">EN</motion.button>
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-[13px] py-[7px] text-[var(--color-text-secondary)] transition-all hover:text-[var(--color-ivory)]">हिं</motion.button>
+          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-[13px] py-[7px] text-[var(--color-text-secondary)] transition-all hover:text-[var(--color-ivory)]">తె</motion.button>
         </div>
 
         <Button asChild className="rounded-[3px] border border-[var(--color-primary-hover)] bg-[var(--color-primary)] px-5 py-[11px] font-sans text-[14.5px] font-medium text-[var(--color-ivory)] transition-colors hover:bg-[var(--color-primary-hover)]">

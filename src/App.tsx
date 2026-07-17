@@ -9,7 +9,8 @@ import { ResultsPage } from './features/results/pages/ResultsPage'
 import { DraftPage } from './features/draft/pages/DraftPage'
 
 // Pages
-const Landing = () => <AboutPage />
+const Home = () => <UploadPage />
+const About = () => <AboutPage />
 const Upload = () => <UploadPage />
 const Processing = () => <ProcessingPage />
 const Results = () => <ResultsPage />
@@ -24,8 +25,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<AppLayout />}>
-          <Route path="/" element={<Landing />} />
-          <Route path="/about" element={<Landing />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/processing" element={<Processing />} />
           <Route path="/results/:documentId" element={<Results />} />
