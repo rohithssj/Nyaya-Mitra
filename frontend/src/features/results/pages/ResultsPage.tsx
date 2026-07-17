@@ -12,6 +12,7 @@ import { LegalAnalysisCard } from '../components/LegalAnalysisCard'
 import { OCRTextCard } from '../components/OCRTextCard'
 import { ExportCard } from '../components/ExportCard'
 import { DeveloperPanel } from '../components/DeveloperPanel'
+import { PrintableReport } from '../components/PrintableReport'
 
 export function ResultsPage() {
   const { documentId } = useParams()
@@ -37,7 +38,12 @@ export function ResultsPage() {
 
   return (
     <div className="w-full pb-[60px] pt-[40px]">
-      <div className="mx-auto w-full max-w-[1200px] px-7 flex gap-10">
+      
+      {/* Printable Report (hidden on screen) */}
+      <PrintableReport doc={doc} />
+
+      {/* Screen Dashboard (hidden on print) */}
+      <div className="mx-auto w-full max-w-[1200px] px-7 flex gap-10 print:hidden">
         
         <DashboardSidebar />
 
@@ -58,7 +64,7 @@ export function ResultsPage() {
 
           <OCRTextCard rawText={doc.ocr?.rawText || 'Not Available'} />
 
-          <ExportCard />
+          <ExportCard doc={doc} />
 
           <DeveloperPanel doc={doc} />
         </div>
