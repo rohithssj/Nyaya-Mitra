@@ -2,20 +2,19 @@ import express from 'express';
 import multer from 'multer';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import vision from '@google-cloud/vision';
-import path from 'path';
+import { OCRService } from './src/services/OCRService.js';
+import { DocumentStore } from './src/storage/DocumentStore.js';
+import fs from 'fs/promises';
+import crypto from 'crypto';
+import type { Document } from './src/types/document.js';
 
-dotenv.config();
+dotenv.config({ override: true });
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const upload = multer({ dest: 'uploads/' });
-
-// Ensure GOOGLE_APPLICATION_CREDENTIALS is set in production
-// For now, we instantiate the client. If no credentials are found, it might fail unless deployed.
-const client = new vision.ImageAnnotatorClient();
 
 app.post('/api/ocr', upload.single('document'), async (req, res) => {
   try {
@@ -25,63 +24,72 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
 
     const filePath = req.file.path;
     const mimeType = req.file.mimetype;
+    const originalName = req.file.originalname;
+    const fileSize = req.file.size;
 
-    let fullResponse: any = null;
-    let text = '';
-    let language = 'Unknown';
-    let confidence = 0;
-    let pageCount = 1;
+    console.log(`Processing started for file: ${originalName} (${mimeType}, ${fileSize} bytes)`);
 
-    // Direct Image OCR using Google Vision (synchronous)
-    if (mimeType.startsWith('image/')) {
-      const [result] = await client.documentTextDetection(filePath);
-      fullResponse = result;
-      
-      text = result.fullTextAnnotation?.text || '';
-      
-      // Calculate average confidence from pages
-      const pages = result.fullTextAnnotation?.pages || [];
-      if (pages.length > 0) {
-        let totalConfidence = 0;
-        let blockCount = 0;
-        pages.forEach(page => {
-          page.blocks?.forEach(block => {
-            totalConfidence += block.confidence || 0;
-            blockCount++;
-          });
-          
-          if (page.property?.detectedLanguages && page.property.detectedLanguages.length > 0) {
-             language = page.property.detectedLanguages[0]?.languageCode || 'Unknown';
-          }
-        });
-        
-        confidence = blockCount > 0 ? totalConfidence / blockCount : 0;
-      }
-    } else if (mimeType === 'application/pdf') {
-      // For MVP: Return a dummy or require GCS setup if real PDF is sent
-      // Since Google Vision sync API doesn't support PDFs natively, 
-      // in production we would extract pages to images here or use asyncbatchannotate
-      return res.status(400).json({ error: 'PDF processing requires Google Cloud Storage or converting pages to images first (not fully implemented in MVP).' });
-    } else {
-      return res.status(400).json({ error: 'Unsupported file type' });
+    // Generate SHA-256 hash for caching
+    const fileHash = await DocumentStore.calculateHash(filePath);
+
+    // Check cache
+    const cachedDoc = DocumentStore.getCachedDocument(fileHash);
+    if (cachedDoc) {
+      console.log('\nGemini OCR\n\nCache HIT\n\nNo API request performed.\n');
+      // Clean up uploaded file since we used cache
+      await fs.unlink(filePath).catch(console.error);
+
+      return res.json({
+        success: true,
+        documentId: cachedDoc.id,
+        cached: true,
+        ocr: {
+          rawText: cachedDoc.ocr.rawText,
+          language: cachedDoc.ocr.language,
+          processingTime: cachedDoc.ocr.processingTime
+        }
+      });
     }
 
-    // Clean up file if we want, but keeping it simple for now
-    
-    // Normalize text
-    const normalizedText = text.replace(/\n{3,}/g, '\n\n').trim();
+    // Process with OCR Service
+    const ocrResult = await OCRService.performOCR(filePath, mimeType);
+
+    // Create Document Object
+    const documentId = crypto.randomUUID();
+    const document: Document = {
+      id: documentId,
+      uploadedAt: new Date().toISOString(),
+      fileName: originalName,
+      mimeType,
+      size: fileSize,
+      ocr: ocrResult
+    };
+
+    // Store in cache
+    DocumentStore.saveDocument(fileHash, document);
+
+    // Clean up uploaded file
+    await fs.unlink(filePath).catch(console.error);
 
     return res.json({
-      text: normalizedText,
-      language,
-      confidence,
-      pageCount,
-      fullResponse
+      success: true,
+      documentId: document.id,
+      cached: false,
+      ocr: {
+        rawText: ocrResult.rawText,
+        language: ocrResult.language,
+        processingTime: ocrResult.processingTime
+      }
     });
 
   } catch (error: any) {
-    console.error('OCR Error:', error);
-    res.status(500).json({ error: error.message || 'Internal Server Error' });
+    console.error("OCR Route Error:");
+    console.dir(error, { depth: null });
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 });
 
@@ -89,3 +97,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);
 });
+

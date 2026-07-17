@@ -23,11 +23,11 @@ export class OCRService {
       const result = await response.json()
       
       const ocrResult: OCRResult = {
-        rawText: result.text || 'Not Available',
-        language: result.language || 'Unknown',
+        rawText: result.ocr?.rawText || result.text || 'Not Available',
+        language: result.ocr?.language || result.language || 'Unknown',
         confidence: result.confidence || 0,
         pageCount: result.pageCount || 1,
-        processingTime: Date.now() - startTime,
+        processingTime: result.ocr?.processingTime || Date.now() - startTime,
         fullResponse: result.fullResponse || null
       }
 

@@ -46,10 +46,7 @@ export function Navbar() {
     <header className="sticky top-0 z-[100] flex items-center justify-between border-b border-[var(--color-border)] bg-[rgba(13,13,13,0.86)] px-5 py-4 backdrop-blur-[10px] md:px-8">
       {/* Left: Logo */}
       <Link to="/" className="flex items-center gap-2.5 font-heading text-[19px] font-[560] text-[var(--color-ivory)]">
-        <div className="relative flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border-[1.4px] border-[var(--color-gold)]">
-          <div className="absolute inset-[4px] rounded-full border border-dashed border-[var(--color-primary-hover)] opacity-70"></div>
-          <div className="h-[6px] w-[6px] rounded-full bg-[var(--color-gold)]"></div>
-        </div>
+        <img src="/icon.jpeg" alt="Nyaya Mitra Logo" className="h-[34px] w-[34px] shrink-0 rounded-full object-cover bg-white p-0.5" />
         Nyaya Mitra
       </Link>
 
