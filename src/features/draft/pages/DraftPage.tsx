@@ -1,8 +1,10 @@
 import * as React from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { mockDraft } from '@/lib/mockData'
 
 export function DraftPage() {
   const { documentId } = useParams()
+  const draft = mockDraft[documentId as keyof typeof mockDraft] || mockDraft['mock-doc-123']
 
   return (
     <div className="w-full pb-[60px] pt-[40px]">
@@ -32,23 +34,23 @@ export function DraftPage() {
 
         <div className="mx-auto max-w-[680px] rounded-[3px] bg-[#EFE7D8] p-[52px_56px] font-mono text-[13.5px] leading-[1.9] text-[#2A2422] shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
           <div className="mb-[26px] border-b-[1.5px] border-[var(--color-primary)] pb-4 text-center font-heading">
-            <div className="text-[17px] font-[650] text-[#5A161F]">IN THE COURT OF THE METROPOLITAN MAGISTRATE</div>
-            <div className="mt-1 text-[11.5px] uppercase tracking-[0.04em] text-[#5c554c]">Hyderabad</div>
+            <div className="text-[17px] font-[650] text-[#5A161F]">{draft.court}</div>
+            <div className="mt-1 text-[11.5px] uppercase tracking-[0.04em] text-[#5c554c]">{draft.location}</div>
           </div>
 
           <p><strong>IN THE MATTER OF:</strong></p>
-          <p className="my-[10px] mb-[20px]">State vs. <span className="border-b border-dotted border-[#8a8072] px-0.5 font-medium text-[#5A161F]">[Applicant Name]</span>, FIR No. <span className="border-b border-dotted border-[#8a8072] px-0.5 font-medium text-[#5A161F]">[FIR Number]</span>, Section 41A CrPC</p>
+          <p className="my-[10px] mb-[20px]">State vs. <span className="border-b border-dotted border-[#8a8072] px-0.5 font-medium text-[#5A161F]">{draft.applicant}</span>, FIR No. <span className="border-b border-dotted border-[#8a8072] px-0.5 font-medium text-[#5A161F]">{draft.firNumber}</span>, {draft.section}</p>
 
           <p><strong>APPLICATION FOR BAIL</strong></p>
           <p className="mt-[14px]">
-            The applicant, <span className="border-b border-dotted border-[#8a8072] px-0.5 font-medium text-[#5A161F]">[Applicant Name]</span>, respectfully submits that the
+            The applicant, <span className="border-b border-dotted border-[#8a8072] px-0.5 font-medium text-[#5A161F]">{draft.applicant}</span>, respectfully submits that the
             offence alleged in the above FIR is bailable in nature. The applicant has been cooperative
             with the investigation and undertakes to comply with all conditions the Hon'ble Court may
             impose, including regular appearance and surrender of travel documents if required.
           </p>
           <p className="mt-[14px]">
             It is therefore prayed that this Hon'ble Court be pleased to grant bail to the applicant
-            in connection with FIR No. <span className="border-b border-dotted border-[#8a8072] px-0.5 font-medium text-[#5A161F]">[FIR Number]</span>, in the interest of
+            in connection with FIR No. <span className="border-b border-dotted border-[#8a8072] px-0.5 font-medium text-[#5A161F]">{draft.firNumber}</span>, in the interest of
             justice.
           </p>
 
@@ -59,7 +61,7 @@ export function DraftPage() {
             </div>
             <div className="text-center">
               <div className="mb-1.5 w-[150px] border-t border-[#5c554c]"></div>
-              Date: <span className="border-b border-dotted border-[#8a8072] px-0.5 font-medium text-[#5A161F]">[Date]</span>
+              Date: <span className="border-b border-dotted border-[#8a8072] px-0.5 font-medium text-[#5A161F]">{draft.date}</span>
             </div>
           </div>
         </div>

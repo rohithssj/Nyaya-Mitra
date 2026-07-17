@@ -1,14 +1,44 @@
 import * as React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { UploadZone } from '@/components/common/UploadZone'
+import { useFileUpload } from '@/hooks/useFileUpload'
+import { useCameraCapture } from '@/hooks/useCameraCapture'
 
 export function UploadPage() {
   const navigate = useNavigate()
 
-  const handleUpload = () => {
-    // Mock the flow
-    navigate('/processing')
+  const handleUploadSuccess = (file: File) => {
+    console.log('File accepted:', file)
+    // Wait briefly for the UI to show the preview before navigating
+    setTimeout(() => {
+      navigate('/processing')
+    }, 800)
   }
+
+  const {
+    fileInputRef,
+    isDragging,
+    previewUrl,
+    selectedFile,
+    triggerUpload,
+    onFileChange,
+    onDragOver,
+    onDragLeave,
+    onDrop,
+    accept
+  } = useFileUpload({
+    onUploadSuccess: handleUploadSuccess,
+    onUploadError: (err) => alert(err)
+  })
+
+  const {
+    cameraInputRef,
+    triggerCamera,
+    handleCapture
+  } = useCameraCapture({
+    onCapture: handleUploadSuccess
+  })
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center p-6 pb-10 text-center">
@@ -19,7 +49,33 @@ export function UploadPage() {
         FIR, notice, or chargesheet — in any language, any photo.
       </p>
 
-      <UploadZone onUpload={handleUpload} />
+      {/* Hidden file inputs */}
+      <input 
+        type="file" 
+        className="hidden" 
+        ref={fileInputRef} 
+        onChange={onFileChange} 
+        accept={accept} 
+      />
+      
+      <input 
+        type="file" 
+        className="hidden" 
+        ref={cameraInputRef} 
+        onChange={handleCapture} 
+        accept="image/*" 
+        capture="environment" 
+      />
+
+      <UploadZone 
+        onUploadClick={triggerUpload}
+        isDragging={isDragging}
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+        onDrop={onDrop}
+        previewUrl={previewUrl}
+        selectedFile={selectedFile}
+      />
 
       <div className="my-[22px] flex w-full max-w-[440px] items-center gap-3 text-[13px] text-[var(--color-text-secondary)]">
         <div className="h-px flex-1 bg-[var(--color-border)]"></div>
@@ -27,13 +83,18 @@ export function UploadPage() {
         <div className="h-px flex-1 bg-[var(--color-border)]"></div>
       </div>
 
-      <button className="inline-flex items-center gap-[9px] rounded-full border border-[var(--color-border)] bg-transparent px-[22px] py-3 font-sans text-[14.5px] text-[#C9C0B4] transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold-bright)]">
+      <motion.button 
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={triggerCamera}
+        className="inline-flex items-center gap-[9px] rounded-full border border-[var(--color-border)] bg-transparent px-[22px] py-3 font-sans text-[14.5px] text-[#C9C0B4] transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold-bright)]"
+      >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
           <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
           <circle cx="12" cy="13" r="4"/>
         </svg>
         Take a photo instead
-      </button>
+      </motion.button>
 
       <div className="mt-[52px] flex flex-col gap-[22px] md:flex-row md:gap-9">
         <div className="flex max-w-[110px] flex-col items-center gap-2.5">

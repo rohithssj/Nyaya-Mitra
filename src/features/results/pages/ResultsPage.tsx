@@ -1,9 +1,12 @@
 import * as React from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Card, CardContent } from '@/components/common/Card'
+import { Card } from '@/components/common/Card'
+import { mockDocumentResults } from '@/lib/mockData'
 
 export function ResultsPage() {
   const { documentId } = useParams()
+  // Mock fallback
+  const doc = mockDocumentResults[documentId as keyof typeof mockDocumentResults] || mockDocumentResults['mock-doc-123']
 
   return (
     <div className="w-full pb-[60px] pt-[40px]">
@@ -15,16 +18,22 @@ export function ResultsPage() {
               <div className="h-[9px] w-[9px] rounded-full bg-[var(--color-gold)]"></div>
             </div>
             <div>
-              <h1 className="font-heading text-2xl font-[560]">Your FIR, explained</h1>
-              <div className="mt-1 font-mono text-[12px] text-[var(--color-text-secondary)]">Uploaded today · Section 41A, CrPC</div>
+              <h1 className="font-heading text-2xl font-[560]">{doc.title}</h1>
+              <div className="mt-1 font-mono text-[12px] text-[var(--color-text-secondary)]">{doc.meta}</div>
             </div>
           </div>
         </div>
 
         <div className="mb-8 flex flex-wrap gap-2.5">
-          <span className="inline-block rounded-full border border-[rgba(184,134,11,0.4)] bg-[rgba(184,134,11,0.14)] px-2.5 py-1 font-mono text-[11.5px] tracking-[0.02em] text-[var(--color-gold-bright)]">Bailable · your right</span>
-          <span className="inline-block rounded-full border border-[rgba(156,43,58,0.5)] bg-[rgba(122,31,43,0.18)] px-2.5 py-1 font-mono text-[11.5px] tracking-[0.02em] text-[#E08B96]">Chargesheet due · 60 days</span>
-          <span className="inline-block rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-2.5 py-1 font-mono text-[11.5px] tracking-[0.02em] text-[var(--color-text-secondary)]">Court: Metropolitan Magistrate, Hyderabad</span>
+          {doc.tags.map((tag, i) => (
+            <span key={i} className={`inline-block rounded-full border px-2.5 py-1 font-mono text-[11.5px] tracking-[0.02em] ${
+              tag.type === 'gold' ? 'border-[rgba(184,134,11,0.4)] bg-[rgba(184,134,11,0.14)] text-[var(--color-gold-bright)]' :
+              tag.type === 'maroon' ? 'border-[rgba(156,43,58,0.5)] bg-[rgba(122,31,43,0.18)] text-[#E08B96]' :
+              'border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] text-[var(--color-text-secondary)]'
+            }`}>
+              {tag.text}
+            </span>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-[1.4fr_1fr]">
@@ -35,10 +44,7 @@ export function ResultsPage() {
                 In plain words
               </div>
               <p className="text-[15px] leading-[1.75] text-[#C9C0B4]">
-                This FIR has been filed against you under a section of the law that allows bail as a right —
-                the police cannot keep you in custody without producing you before a magistrate within
-                24 hours. The investigating officer has 60 days to file a chargesheet. Until then, you
-                can apply for bail directly; you do not need to wait for the case to proceed further.
+                {doc.summary}
               </p>
             </Card>
 
@@ -48,9 +54,9 @@ export function ResultsPage() {
                 Ask about your case
               </div>
               <div className="mt-3.5 flex flex-wrap gap-2">
-                <span className="cursor-pointer rounded-full border border-[var(--color-border)] px-3 py-1.5 text-[12px] text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold-bright)]">What happens if I miss the deadline?</span>
-                <span className="cursor-pointer rounded-full border border-[var(--color-border)] px-3 py-1.5 text-[12px] text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold-bright)]">Can I apply for bail myself?</span>
-                <span className="cursor-pointer rounded-full border border-[var(--color-border)] px-3 py-1.5 text-[12px] text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold-bright)]">What does Section 41A mean?</span>
+                {doc.questions.map((q, i) => (
+                  <span key={i} className="cursor-pointer rounded-full border border-[var(--color-border)] px-3 py-1.5 text-[12px] text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold-bright)]">{q}</span>
+                ))}
               </div>
               <div className="mt-3.5 flex gap-2.5">
                 <input type="text" placeholder="Type a question about your document…" className="flex-1 rounded-full border border-[var(--color-border)] bg-[var(--color-background)] px-[18px] py-[11px] font-sans text-[13.5px] text-[var(--color-text-primary)] outline-none focus:border-[var(--color-gold)]" />
@@ -68,22 +74,18 @@ export function ResultsPage() {
               <div className="mb-3.5 flex items-center gap-2.5 font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--color-gold-bright)] before:h-px before:w-[14px] before:bg-[var(--color-gold-bright)]">
                 Key facts
               </div>
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] py-[13px]">
-                <span className="text-[13.5px] text-[#C9C0B4]">Bail status</span>
-                <span className="inline-block rounded-full border border-[rgba(184,134,11,0.4)] bg-[rgba(184,134,11,0.14)] px-2.5 py-1 font-mono text-[11.5px] tracking-[0.02em] text-[var(--color-gold-bright)]">Bailable</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] py-[13px]">
-                <span className="text-[13.5px] text-[#C9C0B4]">Chargesheet deadline</span>
-                <span className="inline-block rounded-full border border-[rgba(156,43,58,0.5)] bg-[rgba(122,31,43,0.18)] px-2.5 py-1 font-mono text-[11.5px] tracking-[0.02em] text-[#E08B96]">Mar 4</span>
-              </div>
-              <div className="flex items-center justify-between border-b border-[var(--color-border)] py-[13px]">
-                <span className="text-[13.5px] text-[#C9C0B4]">Investigating officer</span>
-                <span className="inline-block rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-2.5 py-1 font-mono text-[11.5px] tracking-[0.02em] text-[var(--color-text-secondary)]">SI R. Kumar</span>
-              </div>
-              <div className="flex items-center justify-between py-[13px]">
-                <span className="text-[13.5px] text-[#C9C0B4]">Jurisdiction</span>
-                <span className="inline-block rounded-full border border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] px-2.5 py-1 font-mono text-[11.5px] tracking-[0.02em] text-[var(--color-text-secondary)]">Hyderabad</span>
-              </div>
+              {doc.facts.map((fact, i) => (
+                <div key={i} className={`flex items-center justify-between py-[13px] ${i !== doc.facts.length - 1 ? 'border-b border-[var(--color-border)]' : ''}`}>
+                  <span className="text-[13.5px] text-[#C9C0B4]">{fact.label}</span>
+                  <span className={`inline-block rounded-full border px-2.5 py-1 font-mono text-[11.5px] tracking-[0.02em] ${
+                    fact.type === 'gold' ? 'border-[rgba(184,134,11,0.4)] bg-[rgba(184,134,11,0.14)] text-[var(--color-gold-bright)]' :
+                    fact.type === 'maroon' ? 'border-[rgba(156,43,58,0.5)] bg-[rgba(122,31,43,0.18)] text-[#E08B96]' :
+                    'border-[var(--color-border)] bg-[rgba(255,255,255,0.03)] text-[var(--color-text-secondary)]'
+                  }`}>
+                    {fact.value}
+                  </span>
+                </div>
+              ))}
             </Card>
           </div>
         </div>

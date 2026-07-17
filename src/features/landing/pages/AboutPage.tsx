@@ -28,7 +28,7 @@ export function AboutPage() {
                 <Link to="/upload">Try it now</Link>
               </Button>
               <Button asChild variant="ghost" size="lg" className="rounded-[2px]">
-                <a href="#how">See how it works</a>
+                <Link to="/how-it-works">See how it works</Link>
               </Button>
             </div>
             <div className="flex items-center gap-2.5 font-mono text-[13px] text-[var(--color-text-secondary)]">
