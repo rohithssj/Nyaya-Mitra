@@ -9,6 +9,50 @@ export interface OCRResult {
   fullResponse: any
 }
 
+export interface ClassificationResult {
+  type: string
+  confidence: number
+  model: string
+  processingTime: number
+  processedAt: string
+}
+
+export interface ExtractedDate {
+  type: string
+  value: string
+}
+
+export interface ExtractionResult {
+  documentType: string | null
+  court: string | null
+  policeStation: string | null
+  caseNumber: string | null
+  firNumber: string | null
+  crimeNumber: string | null
+  judge: string | null
+  complainant: string | null
+  accused: string | null
+  advocate: string | null
+  sections: string[]
+  acts: string[]
+  dates: ExtractedDate[]
+  addresses: string[]
+  offences: string[]
+  importantPersons: string[]
+  importantOrganizations: string[]
+  processingTime: number
+  model: string
+  processedAt: string
+}
+
+export interface RuleEngineResult {
+  sections: string[]
+  rights: string[]
+  deadlines: string[]
+  warnings: string[]
+  facts: string[]
+}
+
 export interface Document {
   id: string
   file: File
@@ -19,6 +63,9 @@ export interface Document {
   previewUrl: string | null
 
   ocr?: OCRResult
+  classification?: ClassificationResult
+  extraction?: ExtractionResult
+  ruleEngine?: RuleEngineResult
 }
 
 export class DocumentStore {

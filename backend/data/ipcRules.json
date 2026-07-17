@@ -1,0 +1,65 @@
+{
+  "IPC 420": {
+    "title": "Cheating and dishonestly inducing delivery of property",
+    "bailable": false,
+    "cognizable": true,
+    "compoundable": true,
+    "maxPunishment": "7 Years and Fine",
+    "chargesheetDeadline": "90 Days",
+    "rights": [
+      "You have the right to consult and be defended by a legal practitioner of your choice.",
+      "You have the right to remain silent to avoid self-incrimination.",
+      "You must be produced before a Magistrate within 24 hours of arrest."
+    ],
+    "warnings": [
+      "This is a non-bailable offence. Bail is not a matter of right and must be granted by the court.",
+      "Do not tamper with evidence or contact the complainant."
+    ]
+  },
+  "IPC 323": {
+    "title": "Punishment for voluntarily causing hurt",
+    "bailable": true,
+    "cognizable": false,
+    "compoundable": true,
+    "maxPunishment": "1 Year or Fine up to 1000 INR, or both",
+    "chargesheetDeadline": "60 Days",
+    "rights": [
+      "You have the right to claim bail as a matter of right.",
+      "You can mutually settle the matter with the victim as it is a compoundable offence."
+    ],
+    "warnings": [
+      "Ensure you appear before the court on the assigned dates to avoid cancellation of bail."
+    ]
+  },
+  "IPC 379": {
+    "title": "Punishment for theft",
+    "bailable": false,
+    "cognizable": true,
+    "compoundable": true,
+    "maxPunishment": "3 Years or Fine, or both",
+    "chargesheetDeadline": "60 Days",
+    "rights": [
+      "You have the right to consult a lawyer.",
+      "You must be produced before a Magistrate within 24 hours of arrest."
+    ],
+    "warnings": [
+      "This is a non-bailable offence. Bail is not a matter of right."
+    ]
+  },
+  "IPC 498A": {
+    "title": "Husband or relative of husband of a woman subjecting her to cruelty",
+    "bailable": false,
+    "cognizable": true,
+    "compoundable": false,
+    "maxPunishment": "3 Years and Fine",
+    "chargesheetDeadline": "60 Days",
+    "rights": [
+      "You have the right to consult a lawyer.",
+      "You have the right to seek anticipatory bail from the Sessions Court or High Court."
+    ],
+    "warnings": [
+      "This is a non-bailable offence.",
+      "Arrest should not be routine; police must follow guidelines laid down in Arnesh Kumar vs State of Bihar."
+    ]
+  }
+}

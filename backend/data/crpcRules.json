@@ -1,0 +1,19 @@
+{
+  "CrPC 41A": {
+    "title": "Notice of appearance before police officer",
+    "bailable": true,
+    "cognizable": true,
+    "compoundable": false,
+    "maxPunishment": "N/A",
+    "chargesheetDeadline": "N/A",
+    "rights": [
+      "You have the right to know the details of the complaint against you.",
+      "You are not required to be arrested immediately if you comply with the notice.",
+      "You have the right to be accompanied by a lawyer during questioning."
+    ],
+    "warnings": [
+      "You must comply with the terms of the notice.",
+      "Failure to appear before the police officer can result in your arrest."
+    ]
+  }
+}

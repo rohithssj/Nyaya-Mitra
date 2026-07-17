@@ -9,13 +9,11 @@ export class ClassificationService {
         const startTime = Date.now();
         
         try {
-            console.log('\nClassification Started\n');
-            console.log(`Model:\n${AI_CONFIG.classificationModel}\n`);
-            console.log(`Document:\n${documentId}\n`);
-            console.log(`Cache:\nMISS\n`);
-
+            console.log('\n========== Classification ==========');
+            console.log(`Model:\n${AI_CONFIG.classificationModel}`);
+            
             const prompt = `${CLASSIFICATION_PROMPT}\n\nDOCUMENT TEXT:\n${ocrText}`;
-            console.log('\n--- DEBUG: PROMPT SENT ---\n', prompt.substring(0, 500) + '... [truncated]', '\n--------------------------\n');
+            console.log(`Prompt:\n${prompt}`);
 
             const result = await aiService.generate(
                 [AI_CONFIG.classificationModel],
@@ -24,30 +22,27 @@ export class ClassificationService {
                 { temperature: 0 }
             );
 
-            console.log('\n--- DEBUG: RAW AI RESPONSE ---\n', result.text, '\n------------------------------\n');
+            console.log(`Raw Response:\n${result.text}`);
 
             const processingTime = Date.now() - startTime;
-            const tokens = result.usage ? `Prompt: ${result.usage.promptTokens}, Output: ${result.usage.completionTokens}, Total: ${result.usage.totalTokens}` : 'Unavailable';
-
-            console.log(`Processing:\n${processingTime} ms\n`);
-            console.log(`Tokens:\n${tokens}\n`);
-            console.log('Finished\n');
-
+            
             let parsedJson;
             try {
                 const cleanText = result.text.replace(/```json/gi, '').replace(/```/g, '').trim();
                 parsedJson = JSON.parse(cleanText);
-                console.log('\n--- DEBUG: PARSED JSON ---\n', parsedJson, '\n--------------------------\n');
-            } catch (e) {
-                console.error('\n--- DEBUG: PARSING EXCEPTION ---\n', e, '\n--------------------------------\n');
-                console.error("Failed to parse classification JSON:", result.text);
-                parsedJson = { type: 'Unknown', confidence: 0 };
+                console.log(`Parsed JSON:\n${JSON.stringify(parsedJson, null, 2)}`);
+            } catch (e: any) {
+                console.error(`\nParsing Error:\n${e.message}\n${e.stack}`);
+                console.error(`Raw Response that failed parsing:\n${result.text}`);
+                throw e; // Throw to trigger the outer catch for debugging
             }
 
             const typeValue = parsedJson.type;
             const confidenceValue = typeof parsedJson.confidence === 'number' ? parsedJson.confidence : 0;
             
             const isValidType = SUPPORTED_DOCUMENT_TYPES.includes(typeValue as any);
+
+            console.log('Finished\n');
 
             return {
                 type: isValidType ? typeValue : 'Unknown',
@@ -58,10 +53,12 @@ export class ClassificationService {
             };
 
         } catch (error: any) {
-            console.error('\n--- DEBUG: CAUGHT EXCEPTION IN CLASSIFICATION SERVICE ---\n');
-            console.dir(error, { depth: null });
-            console.error('\n-------------------------------------------------------\n');
+            console.error(`\nAPI/Execution Error:\nStatus: ${error.status || 'N/A'}`);
+            console.error(`Provider Error: ${JSON.stringify(error.details || {})}`);
+            console.error(`Message: ${error.message}`);
+            console.error(`Stack: ${error.stack}`);
             
+            // Restore graceful fallback as requested (after logging)
             return {
                 type: 'Unknown',
                 confidence: 0,

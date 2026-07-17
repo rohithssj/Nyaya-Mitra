@@ -8,16 +8,15 @@ export class ExtractionService {
         const startTime = Date.now();
         
         try {
-            console.log('\nExtraction Started\n');
-            console.log(`Document:\n${documentId}\n`);
-            console.log(`Cache:\nMISS\n`);
-            console.log(`Model:\n${AI_CONFIG.entityModel}\n`);
+            console.log('\n========== Extraction ==========');
+            console.log(`Model:\n${AI_CONFIG.entityModel}`);
 
             let prompt = `${EXTRACTION_PROMPT}\n\n`;
             if (classificationType && classificationType !== 'Unknown') {
                 prompt += `CONTEXT: This document has been classified as "${classificationType}".\n\n`;
             }
             prompt += `DOCUMENT TEXT:\n${ocrText}`;
+            console.log(`Prompt:\n${prompt}`);
 
             const result = await aiService.generate(
                 [AI_CONFIG.entityModel],
@@ -26,15 +25,19 @@ export class ExtractionService {
                 { temperature: 0 }
             );
 
+            console.log(`Raw Response:\n${result.text}`);
+
             const processingTime = Date.now() - startTime;
             
             let parsedJson: any;
             try {
                 const cleanText = result.text.replace(/```json/gi, '').replace(/```/g, '').trim();
                 parsedJson = JSON.parse(cleanText);
-            } catch (e) {
-                console.error("Failed to parse extraction JSON:", result.text);
-                return null;
+                console.log(`Parsed JSON:\n${JSON.stringify(parsedJson, null, 2)}`);
+            } catch (e: any) {
+                console.error(`\nParsing Error:\n${e.message}\n${e.stack}`);
+                console.error(`Raw Response that failed parsing:\n${result.text}`);
+                throw e;
             }
 
             // Normalization
@@ -70,13 +73,16 @@ export class ExtractionService {
                 processedAt: new Date().toISOString()
             };
 
-            console.log('Extraction Complete\n');
+            console.log('Finished\n');
             return extractionResult;
 
         } catch (error: any) {
-            console.error('\n--- DEBUG: CAUGHT EXCEPTION IN EXTRACTION SERVICE ---\n');
-            console.dir(error, { depth: null });
-            console.error('\n-----------------------------------------------------\n');
+            console.error(`\nAPI/Execution Error:\nStatus: ${error.status || 'N/A'}`);
+            console.error(`Provider Error: ${JSON.stringify(error.details || {})}`);
+            console.error(`Message: ${error.message}`);
+            console.error(`Stack: ${error.stack}`);
+            
+            // Restore graceful fallback as requested
             return null;
         }
     }

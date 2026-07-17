@@ -1,0 +1,32 @@
+{
+  "BNSS 316": {
+    "title": "Cheating (Equivalent to IPC 420)",
+    "bailable": false,
+    "cognizable": true,
+    "compoundable": true,
+    "maxPunishment": "7 Years and Fine",
+    "chargesheetDeadline": "90 Days",
+    "rights": [
+      "You have the right to consult and be defended by a legal practitioner of your choice.",
+      "You must be produced before a Magistrate within 24 hours of arrest."
+    ],
+    "warnings": [
+      "This is a non-bailable offence. Bail must be granted by the court."
+    ]
+  },
+  "BNSS 35": {
+    "title": "Notice of appearance before police officer (Equivalent to CrPC 41A)",
+    "bailable": true,
+    "cognizable": true,
+    "compoundable": false,
+    "maxPunishment": "N/A",
+    "chargesheetDeadline": "N/A",
+    "rights": [
+      "You have the right to know the details of the complaint.",
+      "You are not required to be arrested if you comply with the notice."
+    ],
+    "warnings": [
+      "Failure to appear before the police officer can result in arrest."
+    ]
+  }
+}

@@ -41,12 +41,18 @@ export function ProcessingPage() {
     // Process OCR
     const processDocument = async () => {
       try {
+        console.log('[DEBUG Frontend] 6. Calling OCRService.processDocument...')
         await OCRService.processDocument(documentId)
+        console.log('[DEBUG Frontend] 6.1 OCRService resolved successfully.')
         if (isMounted) {
           clearInterval(stepInterval)
+          console.log('[DEBUG Frontend] 7. Navigating to results page...')
           navigate(`/results/${documentId}`)
+        } else {
+          console.log('[DEBUG Frontend] Component unmounted before navigation.')
         }
       } catch (err: any) {
+        console.error('[DEBUG Frontend] Exception in processDocument:', err)
         if (isMounted) {
           clearInterval(stepInterval)
           setError(err.message || 'Failed to process document.')

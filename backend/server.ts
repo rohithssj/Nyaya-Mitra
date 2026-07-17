@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { OCRService } from './src/services/OCRService.js';
 import { ClassificationService } from './src/services/ClassificationService.js';
 import { ExtractionService } from './src/services/ExtractionService.js';
+import { RuleEngineService } from './src/services/RuleEngineService.js';
 import { DocumentStore } from './src/storage/DocumentStore.js';
 import fs from 'fs/promises';
 import crypto from 'crypto';
@@ -57,6 +58,14 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
           console.log('\nExtraction\n\nCache HIT\n\nReturning cached entities.\n');
       }
 
+      let ruleEngine = cachedDoc.ruleEngine;
+      if (!ruleEngine) {
+          const sections = extraction?.sections || [];
+          const documentType = extraction?.documentType || classification?.type;
+          ruleEngine = await RuleEngineService.analyzeSections(sections, documentType);
+          cachedDoc.ruleEngine = ruleEngine;
+      }
+
       DocumentStore.saveDocument(fileHash, cachedDoc);
 
       // Clean up uploaded file since we used cache
@@ -72,14 +81,16 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
           processingTime: cachedDoc.ocr.processingTime
         },
         classification,
-        ...(extraction ? { extraction } : { extraction: null })
+        ...(extraction ? { extraction } : { extraction: null }),
+        ruleEngine
       });
     }
 
     // Process with OCR Service
-    console.log('\n--- DEBUG (api/ocr): ABOUT TO CALL OCRService.performOCR ---\n');
+    console.log('\n========== OCR ==========');
+    console.log('OCR Started');
     const ocrResult = await OCRService.performOCR(filePath, mimeType);
-    console.log('\n--- DEBUG (api/ocr): OCR COMPLETED SUCCESSFULLY ---\n');
+    console.log('OCR Finished\n');
 
     // Create Document Object
     const documentId = crypto.randomUUID();
@@ -90,6 +101,13 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
     console.log('\n--- DEBUG (api/ocr): CLASSIFICATION COMPLETED ---\n');
 
     const extraction = await ExtractionService.performExtraction(ocrResult.rawText, documentId, classification.type) || undefined;
+    
+    // Process Rule Engine
+    console.log('\n--- DEBUG (api/ocr): ABOUT TO CALL RuleEngineService.analyzeSections ---\n');
+    const sections = extraction?.sections || [];
+    const docType = extraction?.documentType || classification.type;
+    const ruleEngine = await RuleEngineService.analyzeSections(sections, docType);
+    console.log('\n--- DEBUG (api/ocr): RULE ENGINE COMPLETED ---\n');
 
     const document: Document = {
       id: documentId,
@@ -99,7 +117,8 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
       size: fileSize,
       ocr: ocrResult,
       classification,
-      ...(extraction ? { extraction } : {})
+      ...(extraction ? { extraction } : {}),
+      ruleEngine
     };
 
     // Store in cache
@@ -118,7 +137,8 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
         processingTime: ocrResult.processingTime
       },
       classification,
-      extraction: extraction || null
+      extraction: extraction || null,
+      ruleEngine
     });
 
   } catch (error: any) {

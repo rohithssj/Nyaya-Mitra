@@ -1,0 +1,60 @@
+{
+  "Court Summons": {
+    "rights": [
+      "You have the right to know the exact reason you are being summoned.",
+      "You may be represented by a lawyer in court."
+    ],
+    "deadlines": [
+      "You must appear before the court on the exact date and time mentioned in the summons."
+    ],
+    "warnings": [
+      "Failure to appear can result in an arrest warrant being issued against you.",
+      "Do not ignore the summons under any circumstances."
+    ],
+    "facts": [
+      "A summons is a legal order issued by a court directing an individual to appear before a judge."
+    ]
+  },
+  "FIR": {
+    "rights": [
+      "You have the right to get a free copy of the FIR.",
+      "You have the right to seek anticipatory bail if you fear arrest."
+    ],
+    "deadlines": [],
+    "warnings": [
+      "Do not tamper with any evidence or threaten witnesses."
+    ],
+    "facts": [
+      "An FIR (First Information Report) is the first step in a criminal investigation."
+    ]
+  },
+  "Legal Notice": {
+    "rights": [
+      "You have the right to reply to the legal notice through your advocate.",
+      "You have the right to demand proof of the claims made in the notice."
+    ],
+    "deadlines": [
+      "You must reply to the notice within the stipulated time frame (usually 15-30 days)."
+    ],
+    "warnings": [
+      "Ignoring a legal notice may result in the sender initiating civil or criminal proceedings against you in court."
+    ],
+    "facts": [
+      "A legal notice is a formal communication to a person or an entity, informing them that the sender intends to undertake legal proceedings against them."
+    ]
+  },
+  "Bail Order": {
+    "rights": [
+      "You have the right to be released from custody once the bail conditions are met and sureties are accepted."
+    ],
+    "deadlines": [
+      "You must present yourself at the police station or court exactly as directed by the bail conditions."
+    ],
+    "warnings": [
+      "Violating any condition of the bail (like travelling abroad without permission) can lead to immediate cancellation of your bail and re-arrest."
+    ],
+    "facts": [
+      "Bail allows an accused person to remain free until their trial is completed, subject to specific restrictions."
+    ]
+  }
+}

@@ -23,4 +23,5 @@ export interface Document {
     ocr: OCRResult;
     classification?: ClassificationResult;
     extraction?: ExtractionResult;
+    ruleEngine?: import('./rules.js').RuleEngineResult;
 }
