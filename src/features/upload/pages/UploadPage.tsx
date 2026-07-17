@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { UploadZone } from '@/components/common/UploadZone'
 import { useFileUpload } from '@/hooks/useFileUpload'
-import { useCameraCapture } from '@/hooks/useCameraCapture'
+import { CameraModal } from '@/components/common/CameraModal'
 
 export function UploadPage() {
   const navigate = useNavigate()
+  const [isCameraOpen, setIsCameraOpen] = React.useState(false)
 
   const handleUploadSuccess = (file: File) => {
     console.log('File accepted:', file)
@@ -32,14 +33,6 @@ export function UploadPage() {
     onUploadError: (err) => alert(err)
   })
 
-  const {
-    cameraInputRef,
-    triggerCamera,
-    handleCapture
-  } = useCameraCapture({
-    onCapture: handleUploadSuccess
-  })
-
   return (
     <div className="flex flex-1 flex-col items-center justify-center p-6 pb-10 text-center">
       <h1 className="mb-2.5 max-w-[480px] font-heading text-[26px] font-[560] leading-[1.25] tracking-[-0.01em] md:text-[32px]">
@@ -56,15 +49,6 @@ export function UploadPage() {
         ref={fileInputRef} 
         onChange={onFileChange} 
         accept={accept} 
-      />
-      
-      <input 
-        type="file" 
-        className="hidden" 
-        ref={cameraInputRef} 
-        onChange={handleCapture} 
-        accept="image/*" 
-        capture="environment" 
       />
 
       <UploadZone 
@@ -86,7 +70,7 @@ export function UploadPage() {
       <motion.button 
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        onClick={triggerCamera}
+        onClick={() => setIsCameraOpen(true)}
         className="inline-flex items-center gap-[9px] rounded-full border border-[var(--color-border)] bg-transparent px-[22px] py-3 font-sans text-[14.5px] text-[#C9C0B4] transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold-bright)]"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
@@ -125,6 +109,12 @@ export function UploadPage() {
           <span className="text-[12.5px] leading-[1.4] text-[var(--color-text-secondary)]">You get clear answers</span>
         </div>
       </div>
+
+      <CameraModal 
+        isOpen={isCameraOpen} 
+        onClose={() => setIsCameraOpen(false)} 
+        onCapture={handleUploadSuccess} 
+      />
     </div>
   )
 }
