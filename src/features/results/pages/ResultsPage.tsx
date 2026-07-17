@@ -1,16 +1,40 @@
 import * as React from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, Navigate } from 'react-router-dom'
 import { Card } from '@/components/common/Card'
+import { DocumentStore } from '@/lib/services/DocumentStore'
 import { mockDocumentResults } from '@/lib/mockData'
 
 export function ResultsPage() {
   const { documentId } = useParams()
-  // Mock fallback
+  
+  if (!documentId) return <Navigate to="/upload" />
+  const documentInfo = DocumentStore.getDocument(documentId)
+
+  // Mock fallback for UI testing if document store doesn't have it
   const doc = mockDocumentResults[documentId as keyof typeof mockDocumentResults] || mockDocumentResults['mock-doc-123']
 
   return (
     <div className="w-full pb-[60px] pt-[40px]">
       <div className="mx-auto w-full max-w-[1080px] px-7">
+        
+        {documentInfo?.rawText && (
+          <div className="mb-6 rounded-[4px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 font-mono text-[11px] text-[var(--color-text-secondary)]">
+            <div className="mb-2 flex items-center justify-between border-b border-[var(--color-border)] pb-2 uppercase tracking-wider text-[var(--color-gold-bright)]">
+              <span>OCR Debug Data</span>
+              <span>ID: {documentInfo.id}</span>
+            </div>
+            <div className="mb-2 flex gap-4">
+              <span>Language: {documentInfo.language}</span>
+              <span>Confidence: {(documentInfo.confidence! * 100).toFixed(0)}%</span>
+              <span>Pages: {documentInfo.pageCount}</span>
+              <span>Time: {documentInfo.ocrProcessingTime}ms</span>
+            </div>
+            <div className="max-h-[100px] overflow-y-auto whitespace-pre-wrap rounded bg-black/40 p-2 text-[#C9C0B4]">
+              {documentInfo.rawText}
+            </div>
+          </div>
+        )}
+
         <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="relative flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border-[1.4px] border-[var(--color-gold)]">

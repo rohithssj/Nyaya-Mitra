@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { UploadService, type UploadedFile } from '@/lib/services/UploadService'
+import { DocumentStore, type Document } from '@/lib/services/DocumentStore'
 import { ValidationService } from '@/lib/services/ValidationService'
 import { useFileValidation } from './useFileValidation'
 import { useDragDrop } from './useDragDrop'
@@ -7,7 +7,7 @@ import { useDragDrop } from './useDragDrop'
 export type UploadState = 'idle' | 'selecting' | 'uploading' | 'completed' | 'failed' | 'cancelled'
 
 interface UseFileUploadOptions {
-  onSuccess?: (fileRecord: UploadedFile) => void
+  onSuccess?: (doc: Document) => void
   onError?: (error: string) => void
 }
 
@@ -16,7 +16,7 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   const [uploadState, setUploadState] = useState<UploadState>('idle')
-  const [uploadedRecord, setUploadedRecord] = useState<UploadedFile | null>(null)
+  const [uploadedRecord, setUploadedRecord] = useState<Document | null>(null)
   
   const { error: validationError, validate, clearError } = useFileValidation()
 
@@ -32,11 +32,11 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
         return
       }
 
-      const record = await UploadService.storeFile(file)
-      setUploadedRecord(record)
+      const doc = await DocumentStore.initializeDocument(file)
+      setUploadedRecord(doc)
       setUploadState('completed')
       
-      if (onSuccess) onSuccess(record)
+      if (onSuccess) onSuccess(doc)
       
     } catch (err: any) {
       setUploadState('failed')
@@ -70,7 +70,7 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
 
   const resetUpload = () => {
     if (uploadedRecord) {
-      UploadService.removeFile(uploadedRecord.id)
+      DocumentStore.removeDocument(uploadedRecord.id)
     }
     setUploadedRecord(null)
     setUploadState('idle')

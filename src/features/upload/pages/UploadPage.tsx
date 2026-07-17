@@ -5,12 +5,12 @@ import { UploadZone } from '@/components/common/UploadZone'
 import { useFileUpload } from '@/hooks/useFileUpload'
 import { useCamera } from '@/hooks/useCamera'
 import { CameraModal } from '@/components/common/CameraModal'
-import type { UploadedFile } from '@/lib/services/UploadService'
+import type { Document } from '@/lib/services/DocumentStore'
 
 export function UploadPage() {
   const navigate = useNavigate()
 
-  const handleUploadSuccess = (record: UploadedFile) => {
+  const handleUploadSuccess = (record: Document) => {
     // Wait briefly for the UI to show the 'completed' state
     setTimeout(() => {
       navigate('/processing', { 
