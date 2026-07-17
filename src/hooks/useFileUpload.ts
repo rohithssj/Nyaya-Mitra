@@ -1,75 +1,95 @@
 import { useState, useRef } from 'react'
+import { UploadService, type UploadedFile } from '@/lib/services/UploadService'
+import { ValidationService } from '@/lib/services/ValidationService'
+import { useFileValidation } from './useFileValidation'
+import { useDragDrop } from './useDragDrop'
+
+export type UploadState = 'idle' | 'selecting' | 'uploading' | 'completed' | 'failed' | 'cancelled'
 
 interface UseFileUploadOptions {
-  accept?: string
-  maxSizeMB?: number
-  onUploadSuccess?: (file: File, previewUrl?: string) => void
-  onUploadError?: (error: string) => void
+  onSuccess?: (fileRecord: UploadedFile) => void
+  onError?: (error: string) => void
 }
 
 export function useFileUpload(options: UseFileUploadOptions = {}) {
-  const { accept = 'image/jpeg, image/png, image/webp, application/pdf', maxSizeMB = 10, onUploadSuccess, onUploadError } = options
+  const { onSuccess, onError } = options
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [isDragging, setIsDragging] = useState(false)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  
+  const [uploadState, setUploadState] = useState<UploadState>('idle')
+  const [uploadedRecord, setUploadedRecord] = useState<UploadedFile | null>(null)
+  
+  const { error: validationError, validate, clearError } = useFileValidation()
 
-  const handleFile = (file: File) => {
-    // Validate size
-    if (file.size > maxSizeMB * 1024 * 1024) {
-      onUploadError?.(`File exceeds maximum size of ${maxSizeMB}MB`)
-      return
+  const handleProcessFile = async (file: File) => {
+    try {
+      clearError()
+      setUploadState('uploading')
+
+      const validation = validate(file)
+      if (!validation.isValid) {
+        setUploadState('failed')
+        if (onError && validation.error) onError(validation.error)
+        return
+      }
+
+      const record = await UploadService.storeFile(file)
+      setUploadedRecord(record)
+      setUploadState('completed')
+      
+      if (onSuccess) onSuccess(record)
+      
+    } catch (err: any) {
+      setUploadState('failed')
+      if (onError) onError(err.message || 'Upload failed')
     }
-
-    // Generate preview if image
-    let url: string | undefined
-    if (file.type.startsWith('image/')) {
-      url = URL.createObjectURL(file)
-      setPreviewUrl(url)
-    } else {
-      setPreviewUrl(null)
-    }
-
-    setSelectedFile(file)
-    onUploadSuccess?.(file, url)
   }
 
-  const triggerUpload = () => {
-    fileInputRef.current?.click()
-  }
+  const { isDragging, onDragOver, onDragLeave, onDrop } = useDragDrop((files) => {
+    if (files && files.length > 0) {
+      handleProcessFile(files[0])
+    }
+  })
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) handleFile(file)
+    if (file) {
+      handleProcessFile(file)
+    } else {
+      setUploadState('cancelled')
+    }
+    // reset input so the same file can be selected again if needed
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
 
-  const onDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
+  const triggerUpload = () => {
+    setUploadState('selecting')
+    fileInputRef.current?.click()
   }
 
-  const onDragLeave = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-  }
-
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    const file = e.dataTransfer.files?.[0]
-    if (file) handleFile(file)
+  const resetUpload = () => {
+    if (uploadedRecord) {
+      UploadService.removeFile(uploadedRecord.id)
+    }
+    setUploadedRecord(null)
+    setUploadState('idle')
+    clearError()
   }
 
   return {
     fileInputRef,
     isDragging,
-    selectedFile,
-    previewUrl,
+    uploadState,
+    uploadedRecord,
+    validationError,
     triggerUpload,
     onFileChange,
     onDragOver,
     onDragLeave,
     onDrop,
-    accept
+    resetUpload,
+    handleProcessFile, // Expose for camera capture
+    accept: ValidationService.ALLOWED_TYPES.join(', ')
   }
 }

@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from './Button'
+import { CameraService } from '@/lib/services/CameraService'
 
 interface CameraModalProps {
   isOpen: boolean
   onClose: () => void
-  onCapture: (file: File, url: string) => void
+  onCapture: (file: File) => void
 }
 
 export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
@@ -25,43 +26,32 @@ export function CameraModal({ isOpen, onClose, onCapture }: CameraModalProps) {
   const startCamera = async () => {
     setError(null)
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
-      })
+      const mediaStream = await CameraService.requestAccess()
       setStream(mediaStream)
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream
       }
-    } catch (err) {
-      console.error('Camera access denied:', err)
-      setError('Camera access denied or unavailable.')
+    } catch (err: any) {
+      setError(err.message || 'Camera access denied or unavailable.')
     }
   }
 
   const stopCamera = () => {
     if (stream) {
-      stream.getTracks().forEach(track => track.stop())
+      CameraService.stopStream(stream)
       setStream(null)
     }
   }
 
-  const handleCapture = () => {
+  const handleCapture = async () => {
     if (!videoRef.current) return
     
-    const canvas = document.createElement('canvas')
-    canvas.width = videoRef.current.videoWidth
-    canvas.height = videoRef.current.videoHeight
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      ctx.drawImage(videoRef.current, 0, 0)
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' })
-          const url = URL.createObjectURL(blob)
-          onCapture(file, url)
-          onClose()
-        }
-      }, 'image/jpeg', 0.9)
+    try {
+      const file = await CameraService.captureImage(videoRef.current)
+      onCapture(file)
+      onClose()
+    } catch (err) {
+      setError('Failed to capture image.')
     }
   }
 

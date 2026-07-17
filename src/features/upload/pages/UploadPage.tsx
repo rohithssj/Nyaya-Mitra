@@ -1,37 +1,54 @@
 import * as React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { UploadZone } from '@/components/common/UploadZone'
 import { useFileUpload } from '@/hooks/useFileUpload'
+import { useCamera } from '@/hooks/useCamera'
 import { CameraModal } from '@/components/common/CameraModal'
+import type { UploadedFile } from '@/lib/services/UploadService'
 
 export function UploadPage() {
   const navigate = useNavigate()
-  const [isCameraOpen, setIsCameraOpen] = React.useState(false)
 
-  const handleUploadSuccess = (file: File) => {
-    console.log('File accepted:', file)
-    // Wait briefly for the UI to show the preview before navigating
+  const handleUploadSuccess = (record: UploadedFile) => {
+    // Wait briefly for the UI to show the 'completed' state
     setTimeout(() => {
-      navigate('/processing')
-    }, 800)
+      navigate('/processing', { 
+        state: { 
+          documentId: record.id,
+          fileName: record.fileName,
+          size: record.size,
+          previewUrl: record.previewUrl
+        } 
+      })
+    }, 1200)
   }
 
   const {
     fileInputRef,
     isDragging,
-    previewUrl,
-    selectedFile,
+    uploadState,
+    uploadedRecord,
+    validationError,
     triggerUpload,
     onFileChange,
     onDragOver,
     onDragLeave,
     onDrop,
+    resetUpload,
+    handleProcessFile,
     accept
   } = useFileUpload({
-    onUploadSuccess: handleUploadSuccess,
-    onUploadError: (err) => alert(err)
+    onSuccess: handleUploadSuccess,
   })
+
+  const {
+    isCameraOpen,
+    openCamera,
+    closeCamera,
+    mobileInputRef,
+    handleMobileCapture
+  } = useCamera(handleProcessFile, (err) => console.error(err))
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center p-6 pb-10 text-center">
@@ -50,6 +67,27 @@ export function UploadPage() {
         onChange={onFileChange} 
         accept={accept} 
       />
+      <input 
+        type="file" 
+        className="hidden" 
+        ref={mobileInputRef} 
+        onChange={handleMobileCapture} 
+        accept="image/*" 
+        capture="environment"
+      />
+
+      <AnimatePresence>
+        {validationError && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="mb-4 rounded bg-red-900/40 border border-red-500/50 px-4 py-2 text-red-200 text-sm"
+          >
+            {validationError}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <UploadZone 
         onUploadClick={triggerUpload}
@@ -57,8 +95,10 @@ export function UploadPage() {
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
-        previewUrl={previewUrl}
-        selectedFile={selectedFile}
+        previewUrl={uploadedRecord?.previewUrl}
+        selectedFile={uploadedRecord?.file}
+        uploadState={uploadState}
+        onReset={resetUpload}
       />
 
       <div className="my-[22px] flex w-full max-w-[440px] items-center gap-3 text-[13px] text-[var(--color-text-secondary)]">
@@ -70,8 +110,9 @@ export function UploadPage() {
       <motion.button 
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        onClick={() => setIsCameraOpen(true)}
-        className="inline-flex items-center gap-[9px] rounded-full border border-[var(--color-border)] bg-transparent px-[22px] py-3 font-sans text-[14.5px] text-[#C9C0B4] transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold-bright)]"
+        onClick={openCamera}
+        disabled={uploadState === 'uploading' || uploadState === 'completed'}
+        className="inline-flex items-center gap-[9px] rounded-full border border-[var(--color-border)] bg-transparent px-[22px] py-3 font-sans text-[14.5px] text-[#C9C0B4] transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold-bright)] disabled:opacity-50 disabled:hover:border-[var(--color-border)] disabled:hover:text-[#C9C0B4]"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
           <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
@@ -112,8 +153,8 @@ export function UploadPage() {
 
       <CameraModal 
         isOpen={isCameraOpen} 
-        onClose={() => setIsCameraOpen(false)} 
-        onCapture={handleUploadSuccess} 
+        onClose={closeCamera} 
+        onCapture={handleProcessFile} 
       />
     </div>
   )
