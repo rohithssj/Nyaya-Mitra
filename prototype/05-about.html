@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nyaya Saral — Legal papers, translated into plain sense</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,450;9..144,560;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0D0D0D;
+    --bg-elevated:#161211;
+    --bg-elevated-2:#1C1716;
+    --maroon:#7A1F2B;
+    --maroon-deep:#5A161F;
+    --maroon-bright:#9C2B3A;
+    --gold:#B8860B;
+    --gold-bright:#D4A017;
+    --ivory:#F5F0E8;
+    --ivory-dim:#C9C0B4;
+    --muted:#8F857C;
+    --line:#2A2422;
+    --radius:2px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--ivory);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  ::selection{ background:var(--maroon); color:var(--ivory); }
+
+  a{ color:inherit; text-decoration:none; }
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:560;
+    letter-spacing:-0.01em;
+    color:var(--ivory);
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gold-bright);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:14px; height:1px;
+    background:var(--gold-bright);
+  }
+
+  /* ---------- Nav ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(13,13,13,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 0;
+  }
+  .logo{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:560;
+    color:var(--ivory);
+  }
+  .seal{
+    width:30px; height:30px;
+    border-radius:50%;
+    border:1.4px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    flex-shrink:0;
+  }
+  .seal::before{
+    content:"";
+    position:absolute;
+    inset:4px;
+    border-radius:50%;
+    border:1px dashed var(--maroon-bright);
+    opacity:0.7;
+  }
+  .seal-mark{
+    width:6px; height:6px;
+    background:var(--gold);
+    border-radius:50%;
+  }
+  .nav-links{
+    display:flex; align-items:center; gap:36px;
+    font-size:14.5px;
+    color:var(--ivory-dim);
+  }
+  .nav-links a{ transition:color .15s ease; }
+  .nav-links a:hover{ color:var(--gold-bright); }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:500;
+    font-size:14.5px;
+    padding:11px 20px;
+    border-radius:var(--radius);
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:all .18s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{
+    background:var(--maroon);
+    color:var(--ivory);
+    border-color:var(--maroon-bright);
+  }
+  .btn-primary:hover{ background:var(--maroon-bright); }
+  .btn-ghost{
+    color:var(--ivory-dim);
+    border-color:var(--line);
+  }
+  .btn-ghost:hover{ border-color:var(--gold); color:var(--gold-bright); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:104px 0 90px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    top:-200px; right:-160px;
+    width:520px; height:520px;
+    background:radial-gradient(circle, rgba(122,31,43,0.28) 0%, rgba(122,31,43,0) 68%);
+    pointer-events:none;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:64px;
+    align-items:center;
+    position:relative;
+  }
+  .hero h1{
+    font-size:52px;
+    line-height:1.08;
+    margin:22px 0 22px;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--gold-bright);
+    font-weight:450;
+  }
+  .hero p.lede{
+    font-size:17.5px;
+    color:var(--ivory-dim);
+    max-width:480px;
+    margin-bottom:34px;
+  }
+  .hero-ctas{
+    display:flex; align-items:center; gap:16px;
+    margin-bottom:28px;
+  }
+  .trust-line{
+    display:flex; align-items:center; gap:9px;
+    font-size:13px;
+    color:var(--muted);
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .trust-line .dot{
+    width:5px; height:5px; border-radius:50%;
+    background:var(--gold);
+  }
+
+  /* ---------- Signature visual: document transform ---------- */
+  .transform-card{
+    background:var(--bg-elevated);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:26px;
+    position:relative;
+  }
+  .doc-panel{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:18px 20px;
+  }
+  .doc-panel .doc-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:10px;
+    display:block;
+  }
+  .doc-panel p{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    line-height:1.85;
+    color:var(--ivory-dim);
+  }
+  .doc-panel mark{
+    background:none;
+    color:var(--maroon-bright);
+    border-bottom:1px solid var(--maroon-bright);
+    font-weight:500;
+  }
+
+  .seal-divider{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin:18px 0;
+  }
+  .seal-divider .line{
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+  .seal-lg{
+    width:52px; height:52px;
+    border-radius:50%;
+    border:1.4px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+    flex-shrink:0;
+  }
+  .seal-lg::before{
+    content:"";
+    position:absolute; inset:5px;
+    border-radius:50%;
+    border:1px dashed var(--maroon-bright);
+  }
+  .seal-lg svg{ width:18px; height:18px; }
+
+  .result-panel{
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:18px 20px;
+  }
+  .result-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .result-row:last-child{ border-bottom:none; }
+  .result-key{
+    font-size:13.5px;
+    color:var(--ivory-dim);
+  }
+  .badge{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    padding:4px 10px;
+    border-radius:20px;
+    letter-spacing:0.02em;
+  }
+  .badge-gold{
+    background:rgba(184,134,11,0.14);
+    color:var(--gold-bright);
+    border:1px solid rgba(184,134,11,0.4);
+  }
+  .badge-maroon{
+    background:rgba(122,31,43,0.18);
+    color:#E08B96;
+    border:1px solid rgba(156,43,58,0.5);
+  }
+
+  /* ---------- How it works ---------- */
+  .section{ padding:96px 0; border-bottom:1px solid var(--line); }
+  .section-head{
+    max-width:560px;
+    margin-bottom:56px;
+  }
+  .section-head h2{
+    font-size:34px;
+    margin-top:16px;
+  }
+  .section-head p{
+    color:var(--ivory-dim);
+    font-size:15.5px;
+    margin-top:14px;
+  }
+
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .step{
+    background:var(--bg);
+    padding:36px 32px;
+  }
+  .step-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--gold);
+    letter-spacing:0.05em;
+  }
+  .step h3{
+    font-size:21px;
+    font-weight:500;
+    margin:14px 0 10px;
+    font-family:'Fraunces', serif;
+  }
+  .step p{
+    color:var(--muted);
+    font-size:14.5px;
+  }
+
+  /* ---------- Features ---------- */
+  .feature-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .feature{
+    background:var(--bg-elevated);
+    padding:32px;
+    transition:background .18s ease;
+  }
+  .feature:hover{ background:var(--bg-elevated-2); }
+  .feature-icon{
+    width:34px; height:34px;
+    border:1px solid var(--maroon-bright);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:18px;
+  }
+  .feature-icon svg{ width:15px; height:15px; stroke:var(--gold-bright); }
+  .feature h3{
+    font-size:18px;
+    font-weight:500;
+    margin-bottom:8px;
+  }
+  .feature p{
+    color:var(--muted);
+    font-size:14px;
+  }
+
+  /* ---------- Document types ---------- */
+  .doctypes{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:36px;
+  }
+  .chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    padding:9px 16px;
+    border-radius:20px;
+    border:1px solid var(--maroon-bright);
+    color:var(--ivory);
+    background:rgba(122,31,43,0.1);
+  }
+  .chip.soon{
+    border-color:var(--line);
+    color:var(--muted);
+    background:transparent;
+  }
+  .chip.soon::after{
+    content:" · soon";
+    color:var(--muted);
+    opacity:0.7;
+  }
+
+  /* ---------- Language / trust band ---------- */
+  .band{
+    padding:64px 0;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:40px;
+  }
+  .band-langs{
+    display:flex;
+    gap:0;
+    font-family:'Fraunces', serif;
+    font-size:26px;
+    color:var(--ivory-dim);
+  }
+  .band-langs span{ padding:0 20px; border-right:1px solid var(--line); }
+  .band-langs span:last-child{ border-right:none; }
+  .band-note{
+    max-width:340px;
+    font-size:13.5px;
+    color:var(--muted);
+    line-height:1.7;
+  }
+  .band-note strong{ color:var(--ivory-dim); font-weight:500; }
+
+  /* ---------- Footer ---------- */
+  footer{ padding:48px 0 40px; }
+  .footer-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:20px;
+  }
+  .footer-note{
+    font-size:12.5px;
+    color:var(--muted);
+    max-width:520px;
+    line-height:1.7;
+  }
+  .footer-links{
+    display:flex; gap:26px;
+    font-size:13px;
+    color:var(--ivory-dim);
+  }
+
+  @media (max-width: 880px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .hero h1{ font-size:38px; }
+    .steps{ grid-template-columns:1fr; }
+    .feature-grid{ grid-template-columns:1fr; }
+    .nav-links{ display:none; }
+    .band{ flex-direction:column; align-items:flex-start; }
+    .band-langs{ flex-wrap:wrap; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="logo">
+        <div class="seal"><div class="seal-mark"></div></div>
+        Nyaya Saral
+      </div>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#features">What you get</a>
+        <a href="#documents">Document types</a>
+      </div>
+      <a href="01-home.html" class="btn btn-primary">Try it now</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">AI Legal Rights Navigator</div>
+      <h1>Legal papers,<br>translated into <em>plain sense.</em></h1>
+      <p class="lede">
+        Upload an FIR, chargesheet, or legal notice. Nyaya Saral explains what it means,
+        what rights apply, what deadlines matter — and drafts your next step, in English,
+        Hindi, or Telugu.
+      </p>
+      <div class="hero-ctas">
+        <a href="01-home.html" class="btn btn-primary">Try it now</a>
+        <a href="#how" class="btn btn-ghost">See how it works</a>
+      </div>
+      <div class="trust-line"><span class="dot"></span> Informational guidance, not a substitute for a lawyer</div>
+    </div>
+
+    <div class="transform-card">
+      <div class="doc-panel">
+        <span class="doc-label">First Information Report — Extract</span>
+        <p>
+          "...the accused shall be produced before the <mark>Magistrate</mark> within
+          twenty-four hours... offence under Section 41A is
+          <mark>bailable</mark>... investigation to be completed within
+          <mark>sixty days</mark>..."
+        </p>
+      </div>
+
+      <div class="seal-divider">
+        <div class="line"></div>
+        <div class="seal-lg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--gold-bright)">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </div>
+        <div class="line"></div>
+      </div>
+
+      <div class="result-panel">
+        <div class="result-row">
+          <span class="result-key">Bail status</span>
+          <span class="badge badge-gold">Bailable · your right</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Chargesheet deadline</span>
+          <span class="badge badge-maroon">60 days · Mar 4</span>
+        </div>
+        <div class="result-row">
+          <span class="result-key">Next step</span>
+          <span class="badge badge-gold">Draft bail application</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Process</div>
+      <h2>From confusion to a clear next step.</h2>
+      <p>Three stages, the same order every document goes through — nothing skipped, nothing assumed.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01 — Upload</div>
+        <h3>Share the document</h3>
+        <p>Photograph or upload the FIR, notice, or chargesheet. No formatting or typing required.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02 — Analyze</div>
+        <h3>Rules are applied</h3>
+        <p>Sections, deadlines, and bail eligibility are extracted and checked against actual criminal procedure — not guessed.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03 — Act</div>
+        <h3>Understand & act</h3>
+        <p>Read a plain-language summary of your rights, and download a drafted next step, like a bail application.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Not a chatbot</div>
+      <h2>Structured guidance, not a summary.</h2>
+      <p>A generic assistant paraphrases text. Nyaya Saral applies legal rules to it and tells you what to do next.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" stroke="none"/><path d="M6 8h12M6 12h12M6 16h8"/></svg>
+        </div>
+        <h3>Plain-language explanation</h3>
+        <p>Every clause explained in English, Hindi, or Telugu — no legal degree required.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+        <h3>Rights &amp; deadlines</h3>
+        <p>Bail eligibility, statutory timelines, and what the law entitles you to — calculated, not paraphrased.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"/></svg>
+        </div>
+        <h3>Structured extraction</h3>
+        <p>Sections applied, IO name, court jurisdiction, and case status pulled into one clear dashboard.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M6 9l6 6 6-6"/><path d="M5 21h14"/></svg>
+        </div>
+        <h3>Draft documents</h3>
+        <p>A bail application or reply, pre-filled with your case details, ready to review with a lawyer or file.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="documents">
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:0;">
+      <div class="eyebrow">Coverage</div>
+      <h2>Built for criminal documents first.</h2>
+      <p>The MVP focuses where confusion is most costly. Everything else is on the way.</p>
+    </div>
+    <div class="doctypes">
+      <span class="chip">FIR</span>
+      <span class="chip">Chargesheet</span>
+      <span class="chip">Legal notice</span>
+      <span class="chip">Court summons</span>
+      <span class="chip soon">Rental agreements</span>
+      <span class="chip soon">Employment contracts</span>
+      <span class="chip soon">Loan &amp; bank notices</span>
+      <span class="chip soon">Tax notices</span>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap band" style="border:none; padding:0;">
+    <div class="band-langs">
+      <span>English</span>
+      <span>हिंदी</span>
+      <span>తెలుగు</span>
+    </div>
+    <div class="band-note">
+      <strong>Nyaya Saral gives information, not legal advice.</strong>
+      For representation, we point you to verified legal aid clinics and NALSA resources.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <div class="logo" style="font-size:16px;">
+      <div class="seal" style="width:24px;height:24px;"><div class="seal-mark"></div></div>
+      Nyaya Saral
+    </div>
+    <p class="footer-note">
+      Nyaya Saral is an informational tool and does not constitute legal advice or create an attorney–client relationship.
+    </p>
+    <div class="footer-links">
+      <a href="#how">How it works</a>
+      <a href="#documents">Coverage</a>
+      <a href="01-home.html">Upload</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
