@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 
 export class DocumentStore {
     private static cache: Map<string, Document> = new Map();
+    private static idIndex: Map<string, string> = new Map();
 
     static async calculateHash(filePath: string): Promise<string> {
         const fileBuffer = await fs.readFile(filePath);
@@ -16,7 +17,14 @@ export class DocumentStore {
         return this.cache.get(hash);
     }
 
+    static getDocumentById(documentId: string): Document | undefined {
+        const hash = this.idIndex.get(documentId);
+        if (!hash) return undefined;
+        return this.cache.get(hash);
+    }
+
     static saveDocument(hash: string, document: Document): void {
         this.cache.set(hash, document);
+        this.idIndex.set(document.id, hash);
     }
 }

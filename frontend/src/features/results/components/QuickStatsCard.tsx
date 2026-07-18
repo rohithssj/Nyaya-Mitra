@@ -20,7 +20,7 @@ export function QuickStatsCard({ doc }: { doc: Document }) {
   if (timeline?.events?.length) stats.push({ label: 'Events', value: timeline.events.length.toString() });
 
   return (
-    <div className="mb-7 grid grid-cols-2 md:grid-cols-4 gap-4 p-[20px] rounded border border-[var(--color-border)] bg-black/20" id="stats-section">
+    <div className="mb-4 grid grid-cols-2 gap-4 p-4 rounded border border-[var(--color-border)] bg-black/20" id="stats-section">
       {stats.map((stat, i) => (
         <div key={i}>
           <div className="font-mono text-[11px] text-[var(--color-text-secondary)] uppercase tracking-wider mb-1">{stat.label}</div>

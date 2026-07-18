@@ -9,6 +9,8 @@ import { RuleEngineService } from './src/services/RuleEngineService.js';
 import { SummaryService } from './src/services/SummaryService.js';
 import { TimelineService } from './src/services/TimelineService.js';
 import { RightsService } from './src/services/RightsService.js';
+import { ChatService } from './src/services/ChatService.js';
+import { DraftService } from './src/services/DraftService.js';
 import { DocumentStore } from './src/storage/DocumentStore.js';
 import fs from 'fs/promises';
 import crypto from 'crypto';
@@ -191,8 +193,51 @@ app.post('/api/ocr', upload.single('document'), async (req, res) => {
   }
 });
 
+// Phase 10: Chat API
+app.post('/api/chat', async (req, res) => {
+  try {
+    const { documentId, message, history } = req.body;
+    
+    if (!documentId || !message) {
+      return res.status(400).json({ error: 'documentId and message are required.' });
+    }
+
+    const document = DocumentStore.getDocumentById(documentId);
+    if (!document) {
+      return res.status(404).json({ success: false, error: 'Document session expired. Please upload the document again.' });
+    }
+
+    const response = await ChatService.handleChat(document, message, history || []);
+    res.json(response);
+  } catch (error: any) {
+    console.error('Chat API Error:', error);
+    res.status(500).json({ error: 'An error occurred processing your chat request.' });
+  }
+});
+
+// Phase 11: Draft API
+app.post('/api/draft', async (req, res) => {
+  try {
+    const { documentId, draftType } = req.body;
+    
+    if (!documentId || !draftType) {
+      return res.status(400).json({ error: 'documentId and draftType are required.' });
+    }
+
+    const document = DocumentStore.getDocumentById(documentId);
+    if (!document) {
+      return res.status(404).json({ success: false, error: 'Document session expired. Please upload the document again.' });
+    }
+
+    const response = await DraftService.generateDraft(document, draftType);
+    res.json(response);
+  } catch (error: any) {
+    console.error('Draft API Error:', error);
+    res.status(500).json({ error: 'An error occurred processing your draft request.' });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);
 });
-

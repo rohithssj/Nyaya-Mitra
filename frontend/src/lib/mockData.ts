@@ -1,11 +1,23 @@
-export const mockUser = {
-  id: 'u_12345',
-  name: 'Vikram Singh',
-  email: 'vikram.singh@example.com',
+import type { UserProfile } from './types/user';
+
+export const mockUser: UserProfile = {
+  id: 'USR-284712',
+  name: 'Rohith',
+  email: 'rohith@email.com',
+  role: 'Citizen',
+  memberSince: 'July 2026',
+  avatar: 'R',
   language: 'English',
+  region: 'India',
+  timezone: 'Asia/Kolkata',
   theme: 'Dark',
   notifications: true,
-  avatar: 'V'
+  animations: 'Default',
+  autoSave: true,
+  preferredAIModel: 'Gemini 2.0 Flash Lite',
+  responseLength: 'Medium',
+  enableAISuggestions: true,
+  showDeveloperInfo: false
 };
 
 export const mockHistory = [

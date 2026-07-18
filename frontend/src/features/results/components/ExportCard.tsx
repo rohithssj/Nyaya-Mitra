@@ -44,7 +44,7 @@ export function ExportCard({ doc }: { doc: Document }) {
       <div className="mb-5 flex items-center gap-2.5 font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--color-gold-bright)] before:h-px before:w-[14px] before:bg-[var(--color-gold-bright)]">
         📤 Export
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <button 
           onClick={handleDownloadJSON}
           disabled={downloadingJSON}
